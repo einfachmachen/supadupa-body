@@ -264,3 +264,17 @@ input, select { font-family: inherit; }
 
 /* kleiner Hinweis */
 .note { font-size: 12px; color: var(--lbl); text-align: center; margin-top: 14px; line-height: 1.5; }
+
+/* ---------- Onboarding ---------- */
+.dots { display: flex; gap: 7px; align-items: center; }
+.dot-step { width: 7px; height: 7px; border-radius: 50%; background: var(--surf3); transition: all .2s; }
+.dot-step.on { background: var(--lime); width: 20px; border-radius: 4px; }
+
+.seg-row {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px; width: 100%;
+  text-align: left; padding: 13px 14px; margin-bottom: 8px; border-radius: 13px;
+  border: 1px solid var(--bd); background: var(--surf2); color: var(--txt); font-size: 14px;
+}
+.seg-row small { color: var(--lbl); font-size: 11.5px; }
+.seg-row[data-on="true"] { border-color: var(--lime); background: rgba(170,204,0,.08); }
+.seg-row[data-on="true"] small { color: var(--txt2); }

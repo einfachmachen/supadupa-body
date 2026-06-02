@@ -9,9 +9,10 @@ import MealEditor from './screens/MealEditor.jsx'
 import Today from './screens/Today.jsx'
 import Better from './screens/Better.jsx'
 import Profile from './screens/Profile.jsx'
+import Onboarding from './screens/Onboarding.jsx'
 
 export default function App() {
-  const { ready } = useApp()
+  const { ready, profile } = useApp()
   const [tab, setTab] = useState('today')
   const [editor, setEditor] = useState(null) // {kind, ...}
 
@@ -24,6 +25,11 @@ export default function App() {
         </div>
       </div>
     )
+  }
+
+  // Erst-Abfrage, bis Grundumsatz & Ziel erfasst sind.
+  if (!profile?.onboarded) {
+    return <div className="app"><Onboarding /></div>
   }
 
   if (editor) {

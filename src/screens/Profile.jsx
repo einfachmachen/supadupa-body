@@ -1,13 +1,12 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../store/AppContext.jsx'
-import { useBudget } from '../store/derived.js'
-import { ACTIVITY_LEVELS, GOALS } from '../utils/energy.js'
-import { int } from '../utils/format.js'
+import { ACTIVITY_LEVELS, computeBudget } from '../utils/energy.js'
+import { todayISO } from '../utils/id.js'
+import { int, longDate } from '../utils/format.js'
 
-// Profil & Einstellungen: Tagesbudget, Ziel, Gewicht, Backup.
+// Profil & Einstellungen: Grundumsatz-Daten, Ziel(gewicht bis wann), Backup.
 export default function Profile({ onClose }) {
   const { profile, latestWeight, saveProfile, addWeight, exportJSON, importJSON } = useApp()
-  const budget = useBudget()
   const fileRef = useRef(null)
 
   const [form, setForm] = useState(() => ({
@@ -15,25 +14,44 @@ export default function Profile({ onClose }) {
     birthYear: profile?.birthYear || '',
     heightCm: profile?.heightCm || '',
     activityLevel: profile?.activityLevel || 1.375,
-    goal: profile?.goal || 'lose',
     kcalMode: profile?.kcalMode || 'auto',
-    targetKcal: profile?.targetKcal || budget.kcal,
+    targetKcal: profile?.targetKcal || 2000,
+    targetWeight: profile?.targetWeightKg || '',
+    targetDate: profile?.targetDate || '',
   }))
   const [weight, setWeight] = useState(latestWeight || '')
   const set = (patch) => setForm((f) => ({ ...f, ...patch }))
   const num = (v) => (v === '' || v == null ? null : Number(String(v).replace(',', '.')))
 
+  // Live-Vorschau aus den aktuellen Eingaben.
+  const preview = useMemo(() => computeBudget({
+    sex: form.sex,
+    birthYear: num(form.birthYear),
+    heightCm: num(form.heightCm),
+    activityLevel: Number(form.activityLevel),
+    kcalMode: form.kcalMode,
+    targetKcal: num(form.targetKcal),
+    targetWeightKg: num(form.targetWeight),
+    targetDate: form.targetDate || null,
+  }, num(weight)), [form, weight])
+
   async function handleSave() {
+    const w = num(weight)
+    const tw = num(form.targetWeight)
+    const goal = tw && w ? (tw < w ? 'lose' : tw > w ? 'gain' : 'hold') : (profile?.goal || 'hold')
     await saveProfile({
       sex: form.sex,
       birthYear: num(form.birthYear),
       heightCm: num(form.heightCm),
       activityLevel: Number(form.activityLevel),
-      goal: form.goal,
+      goal,
       kcalMode: form.kcalMode,
       targetKcal: num(form.targetKcal),
+      targetWeightKg: tw,
+      targetDate: form.targetDate || null,
+      onboarded: true,
     })
-    if (weight && Number(weight) !== latestWeight) await addWeight(weight)
+    if (w && w !== latestWeight) await addWeight(w)
     onClose()
   }
 
@@ -53,6 +71,8 @@ export default function Profile({ onClose }) {
       await importJSON(await file.text())
     }
   }
+
+  const rate = preview.ratePerWeek ? preview.ratePerWeek.toLocaleString('de-DE', { maximumFractionDigits: 1 }) : '0'
 
   return (
     <div className="editor">
@@ -95,12 +115,16 @@ export default function Profile({ onClose }) {
           </select>
         </div>
 
-        <div className="field">
-          <label>Ziel</label>
-          <div className="seg">
-            {Object.entries(GOALS).map(([key, g]) => (
-              <button key={key} className={form.goal === key ? 'on' : ''} onClick={() => set({ goal: key })}>{g.label}</button>
-            ))}
+        <div className="section-title">Dein Ziel</div>
+        <div className="row2">
+          <div className="field">
+            <label>Zielgewicht (kg)</label>
+            <input type="number" inputMode="decimal" value={form.targetWeight} onChange={(e) => set({ targetWeight: e.target.value })}
+              placeholder={weight ? String(weight) : '63'} />
+          </div>
+          <div className="field">
+            <label>bis wann</label>
+            <input type="date" value={form.targetDate || ''} min={todayISO()} onChange={(e) => set({ targetDate: e.target.value })} />
           </div>
         </div>
 
@@ -111,16 +135,33 @@ export default function Profile({ onClose }) {
             <button className={form.kcalMode === 'manual' ? 'on' : ''} onClick={() => set({ kcalMode: 'manual' })}>fest</button>
           </div>
         </div>
+
         {form.kcalMode === 'manual' ? (
           <div className="field">
             <label>kcal pro Tag</label>
             <input type="number" inputMode="numeric" value={form.targetKcal} onChange={(e) => set({ targetKcal: e.target.value })} />
           </div>
         ) : (
-          <div className="note" style={{ textAlign: 'left' }}>
-            Berechnet aus Grundumsatz (Mifflin-St Jeor) × Aktivität − Ziel-Defizit.
-            {' '}Aktuell: <b className="num" style={{ color: 'var(--lime)' }}>{int(budget.kcal)} kcal</b>
-            {budget.mode === 'fallback' && ' — bitte Gewicht, Größe & Geburtsjahr ergänzen.'}
+          <div className="livebar">
+            <div className="top">
+              <div className="kc num">{int(preview.kcal)} <small>kcal/Tag</small></div>
+              {preview.direction && preview.direction !== 'hold' && (
+                <div className="rem">
+                  <small>{preview.direction === 'gain' ? 'Aufbauen' : 'Abnehmen'}</small>
+                  <span className="num">~{rate} kg/Woche</span>
+                </div>
+              )}
+            </div>
+            <p className="note" style={{ textAlign: 'left', marginTop: 12, marginBottom: 0 }}>
+              {preview.mode === 'fallback'
+                ? 'Bitte Gewicht, Größe & Geburtsjahr ergänzen, dann rechnen wir dein Budget aus.'
+                : <>Aus Grundumsatz ({int(preview.bmr)} kcal) × Aktivität − gesundem Defizit. Immer über deinem Grundumsatz — keine Sparflamme.</>}
+            </p>
+            {preview.capped && preview.realisticDate && preview.direction !== 'hold' && (
+              <p className="note" style={{ textAlign: 'left', marginTop: 8, marginBottom: 0, color: 'var(--gold)' }}>
+                Gesundes Tempo statt Crash: Ziel realistisch am <b>{longDate(preview.realisticDate)}</b>.
+              </p>
+            )}
           </div>
         )}
 
