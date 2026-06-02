@@ -1,0 +1,67 @@
+import { useState } from 'react'
+import { useApp } from './store/AppContext.jsx'
+import { todayISO } from './utils/id.js'
+import TabBar from './components/TabBar.jsx'
+import Pantry from './screens/Pantry.jsx'
+import ProductForm from './screens/ProductForm.jsx'
+import MealList from './screens/MealList.jsx'
+import MealEditor from './screens/MealEditor.jsx'
+import Today from './screens/Today.jsx'
+import Better from './screens/Better.jsx'
+import Profile from './screens/Profile.jsx'
+
+export default function App() {
+  const { ready } = useApp()
+  const [tab, setTab] = useState('today')
+  const [editor, setEditor] = useState(null) // {kind, ...}
+
+  if (!ready) {
+    return (
+      <div className="app">
+        <div className="empty" style={{ margin: 'auto' }}>
+          <div className="ic">◍</div>
+          <div className="t">SupaDupa <b style={{ color: 'var(--lime)' }}>Body</b></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (editor) {
+    const close = () => setEditor(null)
+    return (
+      <div className="app">
+        {editor.kind === 'product' && <ProductForm productId={editor.id} onClose={close} />}
+        {editor.kind === 'meal' && (
+          <MealEditor mealId={editor.id} presetSlot={editor.presetSlot} addToDate={editor.addToDate} onClose={close} />
+        )}
+        {editor.kind === 'profile' && <Profile onClose={close} />}
+      </div>
+    )
+  }
+
+  return (
+    <div className="app">
+      {tab === 'pantry' && (
+        <Pantry
+          onEdit={(id) => setEditor({ kind: 'product', id })}
+          onNew={() => setEditor({ kind: 'product' })}
+        />
+      )}
+      {tab === 'build' && (
+        <MealList
+          onEdit={(id) => setEditor({ kind: 'meal', id })}
+          onNew={() => setEditor({ kind: 'meal' })}
+        />
+      )}
+      {tab === 'today' && (
+        <Today
+          onOpenProfile={() => setEditor({ kind: 'profile' })}
+          onPlanNew={(slot) => setEditor({ kind: 'meal', presetSlot: slot, addToDate: todayISO() })}
+        />
+      )}
+      {tab === 'better' && <Better />}
+
+      <TabBar active={tab} onChange={setTab} />
+    </div>
+  )
+}
