@@ -4,6 +4,7 @@ import { todayISO } from './utils/id.js'
 import TabBar from './components/TabBar.jsx'
 import Pantry from './screens/Pantry.jsx'
 import ProductForm from './screens/ProductForm.jsx'
+import ProductSearch from './screens/ProductSearch.jsx'
 import MealList from './screens/MealList.jsx'
 import MealEditor from './screens/MealEditor.jsx'
 import Today from './screens/Today.jsx'
@@ -36,9 +37,22 @@ export default function App() {
     const close = () => setEditor(null)
     return (
       <div className="app">
-        {editor.kind === 'product' && <ProductForm productId={editor.id} onClose={close} />}
+        {editor.kind === 'addProduct' && (
+          <ProductSearch
+            onClose={close}
+            onManual={() => setEditor({ kind: 'product' })}
+            onPick={(draft) => setEditor({ kind: 'product', draft })}
+          />
+        )}
+        {editor.kind === 'product' && <ProductForm productId={editor.id} draft={editor.draft} onClose={close} />}
         {editor.kind === 'meal' && (
-          <MealEditor mealId={editor.id} presetSlot={editor.presetSlot} addToDate={editor.addToDate} onClose={close} />
+          <MealEditor
+            mealId={editor.id}
+            presetSlot={editor.presetSlot}
+            addToDate={editor.addToDate}
+            draftMeal={editor.draftMeal}
+            onClose={close}
+          />
         )}
         {editor.kind === 'profile' && <Profile onClose={close} />}
       </div>
@@ -50,19 +64,21 @@ export default function App() {
       {tab === 'pantry' && (
         <Pantry
           onEdit={(id) => setEditor({ kind: 'product', id })}
-          onNew={() => setEditor({ kind: 'product' })}
+          onNew={() => setEditor({ kind: 'addProduct' })}
         />
       )}
       {tab === 'build' && (
         <MealList
           onEdit={(id) => setEditor({ kind: 'meal', id })}
           onNew={() => setEditor({ kind: 'meal' })}
+          onSuggest={(draft) => setEditor({ kind: 'meal', draftMeal: draft })}
         />
       )}
       {tab === 'today' && (
         <Today
           onOpenProfile={() => setEditor({ kind: 'profile' })}
           onPlanNew={(slot) => setEditor({ kind: 'meal', presetSlot: slot, addToDate: todayISO() })}
+          onPlanDraft={(draft) => setEditor({ kind: 'meal', draftMeal: draft, addToDate: todayISO() })}
         />
       )}
       {tab === 'better' && <Better />}

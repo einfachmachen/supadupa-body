@@ -14,16 +14,17 @@ import { int, qty as fmtQty, unitLabel as unitPlural } from '../utils/format.js'
 const EMOJIS = ['🥪', '🥗', '🍽', '🍎', '🥣', '🍳', '🥙', '🍲', '🥤']
 
 // Screen 2 (Editor): Mahlzeit zusammenstellen — Mengen live gegen das Restbudget.
-export default function MealEditor({ mealId, presetSlot, addToDate, onClose }) {
+export default function MealEditor({ mealId, presetSlot, addToDate, draftMeal, onClose }) {
   const { meals, products, productMap, saveMeal, deleteMeal, addEntry } = useApp()
   const existing = meals.find((m) => m.id === mealId)
+  const base = existing || draftMeal // Vorlage ODER Vorschlags-Entwurf
   const budget = useBudget()
   const today = useDayStats(todayISO())
 
-  const [name, setName] = useState(existing?.name || '')
-  const [slot, setSlot] = useState(existing?.slot || presetSlot || 'breakfast')
-  const [emoji, setEmoji] = useState(existing?.emoji || SLOTS.find((s) => s.key === (presetSlot || 'breakfast'))?.emoji || '🍽')
-  const [items, setItems] = useState(() => (existing?.items || []).map((it) => ({ ...it })))
+  const [name, setName] = useState(base?.name || '')
+  const [slot, setSlot] = useState(base?.slot || presetSlot || 'breakfast')
+  const [emoji, setEmoji] = useState(base?.emoji || SLOTS.find((s) => s.key === (base?.slot || presetSlot || 'breakfast'))?.emoji || '🍽')
+  const [items, setItems] = useState(() => (base?.items || []).map((it) => ({ ...it })))
   const [pickerOpen, setPickerOpen] = useState(false)
 
   const nutrition = useMemo(() => nutritionForItems(items, productMap), [items, productMap])

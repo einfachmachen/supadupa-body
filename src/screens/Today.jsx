@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useApp } from '../store/AppContext.jsx'
 import { useBudget, useDayStats, itemsForEntry } from '../store/derived.js'
 import { nutritionForItems } from '../utils/nutrition.js'
+import { suggestMeals } from '../utils/suggest.js'
 import { GOALS } from '../utils/energy.js'
 import { SLOTS } from '../data/slots.js'
 import { todayISO } from '../utils/id.js'
@@ -9,8 +10,8 @@ import { int, prettyDate } from '../utils/format.js'
 import Sheet from '../components/Sheet.jsx'
 
 // Screen 3: Tagesbudget & geplante Mahlzeiten.
-export default function Today({ onOpenProfile, onPlanNew }) {
-  const { profile, meals, productMap, addEntry, updateEntry, removeEntry } = useApp()
+export default function Today({ onOpenProfile, onPlanNew, onPlanDraft }) {
+  const { profile, meals, products, productMap, addEntry, updateEntry, removeEntry } = useApp()
   const date = todayISO()
   const budget = useBudget()
   const { day, total, bySlot, mealMap } = useDayStats(date)
@@ -117,8 +118,11 @@ export default function Today({ onOpenProfile, onPlanNew }) {
         <MealPicker
           slot={pickSlot}
           meals={meals.filter((m) => m.isTemplate)}
+          products={products}
           productMap={productMap}
+          budgetKcal={budget.kcal}
           onPick={async (mealId) => { await addEntry(date, { mealId, slot: pickSlot }); setPickSlot(null) }}
+          onSuggest={(draft) => { onPlanDraft(draft); setPickSlot(null) }}
           onNew={() => { onPlanNew(pickSlot); setPickSlot(null) }}
           onClose={() => setPickSlot(null)}
         />
@@ -127,33 +131,58 @@ export default function Today({ onOpenProfile, onPlanNew }) {
   )
 }
 
-function MealPicker({ slot, meals, productMap, onPick, onNew, onClose }) {
+function MealPicker({ slot, meals, products, productMap, budgetKcal, onPick, onSuggest, onNew, onClose }) {
   const label = SLOTS.find((s) => s.key === slot)?.label || slot
+  const [nonce, setNonce] = useState(0)
+  const suggestions = suggestMeals(products, slot, budgetKcal, { count: 3, nonce })
   // passende Vorlagen zuerst
   const sorted = [...meals].sort((a, b) => (b.slot === slot) - (a.slot === slot) || a.name.localeCompare(b.name))
 
   return (
-    <Sheet title={`${label} planen`} subtitle="Vorlage wählen oder neu bauen" onClose={onClose}>
-      <button className="cta" style={{ marginBottom: 14 }} onClick={onNew}>＋ Neue Mahlzeit bauen</button>
-
-      {sorted.length === 0 ? (
-        <div className="note">Noch keine Vorlagen — bau dir oben deine erste Mahlzeit.</div>
-      ) : (
-        sorted.map((m) => {
-          const n = nutritionForItems(m.items, productMap)
-          const names = m.items.map((it) => productMap.get(it.productId)?.name).filter(Boolean).join(' · ')
-          return (
-            <button key={m.id} className="mealcard" onClick={() => onPick(m.id)}>
-              <div className="em">{m.emoji || '🍽'}</div>
-              <div className="mc">
-                <div className="t">{m.name}</div>
-                <div className="d">{names}</div>
-              </div>
-              <div className="kc num">{int(n.kcal)}</div>
-            </button>
-          )
-        })
+    <Sheet title={`${label} planen`} subtitle="Vorschlag wählen, Vorlage nehmen oder neu bauen" onClose={onClose}>
+      {suggestions.length > 0 && (
+        <>
+          <div className="sh" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 12, color: 'var(--txt2)', margin: '2px 0 8px' }}>
+            <span>✨ Vorschläge aus deinem Vorrat</span>
+            <button className="linkbtn" onClick={() => setNonce((n) => n + 1)}>↻ neue</button>
+          </div>
+          {suggestions.map((sug, i) => {
+            const names = sug.items.map((it) => productMap.get(it.productId)?.name).filter(Boolean).join(' · ')
+            return (
+              <button key={i} className="mealcard" onClick={() => onSuggest(sug)}>
+                <div className="em">{sug.emoji}</div>
+                <div className="mc">
+                  <div className="t">{sug.name}</div>
+                  <div className="d">{names}</div>
+                </div>
+                <div className="kc num">{int(sug.nutrition.kcal)}</div>
+              </button>
+            )
+          })}
+        </>
       )}
+
+      {sorted.length > 0 && (
+        <>
+          <div className="section-title">Meine Vorlagen</div>
+          {sorted.map((m) => {
+            const n = nutritionForItems(m.items, productMap)
+            const names = m.items.map((it) => productMap.get(it.productId)?.name).filter(Boolean).join(' · ')
+            return (
+              <button key={m.id} className="mealcard" onClick={() => onPick(m.id)}>
+                <div className="em">{m.emoji || '🍽'}</div>
+                <div className="mc">
+                  <div className="t">{m.name}</div>
+                  <div className="d">{names}</div>
+                </div>
+                <div className="kc num">{int(n.kcal)}</div>
+              </button>
+            )
+          })}
+        </>
+      )}
+
+      <button className="cta" style={{ marginTop: 14 }} onClick={onNew}>＋ Selbst zusammenstellen</button>
     </Sheet>
   )
 }

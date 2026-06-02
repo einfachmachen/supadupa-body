@@ -15,10 +15,12 @@ Lauffähiges MVP (Vite + React, IndexedDB, kein Backend). Die drei Kern-Screens
 funktionieren mit echten Daten; beim ersten Start wird ein Demo-Warenkorb
 (aus dem Mockup) angelegt.
 
-- **Vorratskammer** — Produkte suchen/anlegen/bearbeiten, Nutri-Score,
+- **Vorratskammer** — Produkte per **Open-Food-Facts-Suche** übernehmen
+  (Nährwerte & Nutri-Score automatisch) oder manuell anlegen/bearbeiten,
   Alltagseinheiten (Scheibe/TL/Stück), kcal je Einheit.
-- **Mahlzeit bauen** — Zutaten aus dem Vorrat, Mengen-Stepper, Live-Nährwerte
-  gegen das Restbudget, als Vorlage speichern.
+- **Mahlzeit bauen** — **Rezept-Vorschläge aus dem eigenen Vorrat**, fertig
+  aufs Slot-Budget dosiert; antippen → im Builder feinjustieren (Mengen-Stepper,
+  Live-Nährwerte) und als Vorlage speichern oder einplanen.
 - **Heute** — Tagesbudget-Ring (Mifflin-St Jeor × Aktivität − Defizit),
   Makro-Ampel, Mahlzeiten je Fenster ein-/ausplanen, „gegessen" markieren.
 - **Bessere Wahl** — heuristische Alternativ-Vorschläge je Kategorie/Nutri-Score.
@@ -51,19 +53,23 @@ Site-Daten löschen — oder über Profil → Import ein Backup einspielen.
 
 ```
 src/
+  api/openfoodfacts.js OFF-Suche → Produkt-Entwurf (Mapping/Kategorien)
   db/kvStore.js        IndexedDB-Wrapper + Export/Import
   store/               App-State (Context) + abgeleitete Werte
-  utils/               energy.js (Budget), nutrition.js (Nährwerte), format.js
+  utils/               energy.js (Budget), nutrition.js (Nährwerte),
+                       suggest.js (Rezept-Vorschläge), format.js
   data/                Kategorien, Slots, Seed-Daten
   components/          TabBar, NutriGrade, Stepper, Sheet
-  screens/             Pantry, ProductForm, MealList, MealEditor, Today, Better, Profile
+  screens/             Pantry, ProductForm, ProductSearch, MealList, MealEditor,
+                       Today, Better, Profile, Onboarding
   styles/              theme.css (Tokens), app.css
 ```
 
 ## Nächste Schritte (Vorschlag)
 
-1. **Open-Food-Facts-Barcode-Import** (Kamera → EAN → Produkt vorbefüllen).
+1. **Barcode-Scan** (Kamera → EAN → OFF-Produkt direkt übernehmen).
 2. **Gewichtskurve** aus den `WeightEntry`-Daten (Verlaufschart).
-3. Mengen-**Vorschlag** im Builder aktiv nutzen („so viele Scheiben passen noch").
-4. **PWA** vervollständigen (Service-Worker / Offline-Cache, Install-Prompt).
+3. **PWA** vervollständigen (Service-Worker / Offline-Cache, Install-Prompt).
+4. Vorschlags-Engine verfeinern (Vorlieben/Abneigungen, mehr Archetypen,
+   gespeicherte Lieblingskombis bevorzugen).
 5. Alternativen-Engine ausbauen (Akzeptanz speichern, in Vorschläge einfließen).
