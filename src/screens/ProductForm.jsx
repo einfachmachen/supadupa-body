@@ -4,26 +4,28 @@ import { CATEGORIES, category } from '../data/categories.js'
 
 const GRADES = ['A', 'B', 'C', 'D', 'E']
 
-// Vollbild-Editor: Produkt anlegen / bearbeiten (manuell).
-export default function ProductForm({ productId, onClose }) {
+// Vollbild-Editor: Produkt anlegen / bearbeiten. `draft` befüllt ein neues
+// Produkt vor (z. B. aus der Open-Food-Facts-Suche).
+export default function ProductForm({ productId, draft, onClose }) {
   const { products, stores, saveProduct, deleteProduct } = useApp()
   const existing = products.find((p) => p.id === productId)
+  const base = existing || draft || {}
 
-  const initCat = existing?.category || 'bread'
+  const initCat = base.category || 'bread'
   const [form, setForm] = useState(() => ({
-    name: existing?.name || '',
-    brand: existing?.brand || '',
+    name: base.name || '',
+    brand: base.brand || '',
     storeId: existing?.storeId || '',
     category: initCat,
-    baseUnit: existing?.baseUnit || category(initCat).base,
-    grade: existing?.grade || '',
+    baseUnit: base.baseUnit || category(initCat).base,
+    grade: base.grade || '',
     favorite: existing?.favorite || false,
     nutriments: {
       kcal: '', proteinG: '', carbG: '', sugarG: '', fatG: '', satFatG: '', fiberG: '', saltG: '',
-      ...(existing?.nutriments || {}),
+      ...(base.nutriments || {}),
     },
-    units: existing?.units?.length
-      ? existing.units.map((u) => ({ ...u }))
+    units: base.units?.length
+      ? base.units.map((u) => ({ ...u }))
       : [{ ...category(initCat).unit, isDefault: true }],
   }))
 
@@ -77,6 +79,8 @@ export default function ProductForm({ productId, onClose }) {
       baseUnit: form.baseUnit,
       grade: form.grade || null,
       favorite: form.favorite,
+      barcode: existing?.barcode ?? draft?.barcode ?? null,
+      source: existing?.source || draft?.source || 'manual',
       nutriments,
       units: form.units.map((u) => ({ label: u.label.trim(), grams: num(u.grams), isDefault: !!u.isDefault })),
     })
