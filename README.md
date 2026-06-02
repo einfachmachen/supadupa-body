@@ -19,11 +19,18 @@ funktionieren mit echten Daten; beim ersten Start wird ein Demo-Warenkorb
   Alltagseinheiten (Scheibe/TL/Stück), kcal je Einheit.
 - **Mahlzeit bauen** — Zutaten aus dem Vorrat, Mengen-Stepper, Live-Nährwerte
   gegen das Restbudget, als Vorlage speichern.
-- **Heute** — Tagesbudget-Ring (Mifflin-St Jeor × Aktivität − Ziel oder fest),
+- **Heute** — Tagesbudget-Ring (Mifflin-St Jeor × Aktivität − Defizit),
   Makro-Ampel, Mahlzeiten je Fenster ein-/ausplanen, „gegessen" markieren.
 - **Bessere Wahl** — heuristische Alternativ-Vorschläge je Kategorie/Nutri-Score.
-- **Profil** — Ziel, Aktivität, Gewicht, manuelles/automatisches Budget,
-  JSON-Export/-Import (Backup & Gerätewechsel).
+- **Onboarding** — kurze Erst-Abfrage für den Grundumsatz und das **Ziel
+  (Gewicht bis wann)**.
+- **Profil** — Grundumsatz-Daten, Zielgewicht & -datum, Gewicht,
+  manuelles/automatisches Budget, JSON-Export/-Import (Backup).
+
+**Gesundes Tempo statt Diät:** Das Defizit wird aus Zielgewicht + Zeitraum
+abgeleitet, aber gedeckelt (max. ~0,5 kg/Woche) und das Budget fällt nie unter
+den Grundumsatz — kein Crash, kein Hungerstoffwechsel. Zu strikte Wunschtermine
+rechnet die App auf ein realistisches Datum um (`utils/energy.js`).
 
 Doku: `DATENMODELL.md` (Entitäten/Felder), `mockup.html` (ursprünglicher
 Klick-Dummy, Look-Referenz).

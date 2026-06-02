@@ -9,7 +9,7 @@ import {
   defaultUnit, findUnit, kcalPerUnit, nutritionForItems,
 } from '../utils/nutrition.js'
 import { todayISO } from '../utils/id.js'
-import { int, qty as fmtQty } from '../utils/format.js'
+import { int, qty as fmtQty, unitLabel as unitPlural } from '../utils/format.js'
 
 const EMOJIS = ['🥪', '🥗', '🍽', '🍎', '🥣', '🍳', '🥙', '🍲', '🥤']
 
@@ -134,21 +134,23 @@ export default function MealEditor({ mealId, presetSlot, addToDate, onClose }) {
             <div key={i} className="ing">
               <NutriGrade grade={p.grade} />
               <div className="n">
-                <div className="t">{p.name}</div>
+                <div className="t">
+                  <b className="num">{fmtQty(it.qty)}</b> {unitPlural(unit.label, it.qty)} {p.name}
+                </div>
                 <div className="d num">
-                  {fmtQty(it.qty)} × {int(per)} = {int(per * it.qty)} kcal
+                  {int(per * it.qty)} kcal
                   {p.units.length > 1 && (
                     <select
                       value={it.unitLabel}
                       onChange={(e) => setItemUnit(i, e.target.value)}
                       style={{ marginLeft: 8, background: 'var(--surf2)', color: 'var(--txt2)', border: '1px solid var(--bd)', borderRadius: 6, fontSize: 11 }}
                     >
-                      {p.units.map((u) => <option key={u.label} value={u.label}>{u.label}</option>)}
+                      {p.units.map((u) => <option key={u.label} value={u.label}>in {u.label}</option>)}
                     </select>
                   )}
                 </div>
               </div>
-              <Stepper value={it.qty} unitLabel={unit.label} onChange={(q) => setQty(i, q)} />
+              <Stepper value={it.qty} unitLabel={unitPlural(unit.label, it.qty)} onChange={(q) => setQty(i, q)} />
             </div>
           )
         })}

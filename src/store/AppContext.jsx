@@ -33,22 +33,19 @@ export function AppProvider({ children }) {
         db.getAll('weights'),
       ])
 
-      if (!prof && prods.length === 0) {
-        // Erstbefüllung
+      if (prods.length === 0) {
+        // Erstbefüllung des Vorrats (Demo). Profil/Gewicht kommen aus dem
+        // Onboarding — daher hier bewusst NICHT vorbefüllt.
         await Promise.all([
           ...SEED.stores.map((s) => db.put('stores', s)),
           ...SEED.products.map((p) => db.put('products', p)),
           ...SEED.meals.map((m) => db.put('meals', m)),
-          ...SEED.weights.map((w) => db.put('weights', w)),
           ...SEED.daylogs.map((d) => db.put('daylogs', d)),
-          db.putProfile(SEED.profile),
         ])
-        prof = await db.getProfile()
         prods = SEED.products
         strs = SEED.stores
         mls = SEED.meals
         dls = SEED.daylogs
-        wts = SEED.weights
       }
 
       if (!alive) return

@@ -30,3 +30,34 @@ export function prettyDate(iso) {
   const d = new Date(iso + 'T00:00:00')
   return `${DAYS[d.getDay()]} · ${d.getDate()}. ${MONTHS[d.getMonth()]}`
 }
+
+// "2. Juni 2026" — für Zieldatum
+export function longDate(iso) {
+  if (!iso) return ''
+  const d = new Date(iso + 'T00:00:00')
+  return `${d.getDate()}. ${MONTHS[d.getMonth()]} ${d.getFullYear()}`
+}
+
+// Gewicht: "68 kg" / "67,5 kg"
+export function kg(n) {
+  if (n == null || n === '') return '–'
+  return `${Number(n).toLocaleString('de-DE', { maximumFractionDigits: 1 })} kg`
+}
+
+// Einheiten-Plural für die Zutatenliste: "2 Scheiben", "½ Scheibe", "1 TL"
+const PLURALS = {
+  Scheibe: 'Scheiben',
+  Portion: 'Portionen',
+  Glas: 'Gläser',
+  Becher: 'Becher',
+  Stück: 'Stück',
+  Stueck: 'Stück',
+  TL: 'TL',
+  EL: 'EL',
+  g: 'g',
+  ml: 'ml',
+}
+export function unitLabel(label, amount) {
+  if (amount > 1 && PLURALS[label]) return PLURALS[label]
+  return label
+}
