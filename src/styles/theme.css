@@ -1,0 +1,26 @@
+/* Design-Tokens — 1:1 aus dem Mockup (Dark "Dove Sport", Lime-Akzent). */
+:root {
+  --bg: #0E0F12;
+  --surf: #16181D;
+  --surf2: #1E2127;
+  --surf3: #262A32;
+  --txt: #F2F3F5;
+  --txt2: #9AA0A8;
+  --lbl: #6B7079;
+  --bd: #262A32;
+  --bds: #343943;
+  --lime: #AACC00;
+  --neg: #EA4025;
+  --gold: #F5A623;
+  --on: #0E0F12;
+
+  /* Nutri-Score A–E */
+  --a: #1E9E62;
+  --b: #8FCB3A;
+  --c: #F5C518;
+  --d: #F08A24;
+  --e: #EA4025;
+
+  --num: "Questrial", "Century Gothic", "Futura", "Avenir Next", system-ui, sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}

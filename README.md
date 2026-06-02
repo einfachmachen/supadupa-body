@@ -11,16 +11,52 @@ Lime-Akzent).
 
 ## Stand
 
-Konzeptphase. Bisher:
+Lauffähiges MVP (Vite + React, IndexedDB, kein Backend). Die drei Kern-Screens
+funktionieren mit echten Daten; beim ersten Start wird ein Demo-Warenkorb
+(aus dem Mockup) angelegt.
 
-- `DATENMODELL.md` — Entitäten, Felder, abgeleitete Werte, MVP-Schnitt.
-- `mockup.html` — statischer Klick-Dummy der vier Kern-Screens
-  (Vorratskammer · Mahlzeit bauen · Heute · Bessere Wahl).
-  Einfach im Browser öffnen (Desktop oder Handy).
+- **Vorratskammer** — Produkte suchen/anlegen/bearbeiten, Nutri-Score,
+  Alltagseinheiten (Scheibe/TL/Stück), kcal je Einheit.
+- **Mahlzeit bauen** — Zutaten aus dem Vorrat, Mengen-Stepper, Live-Nährwerte
+  gegen das Restbudget, als Vorlage speichern.
+- **Heute** — Tagesbudget-Ring (Mifflin-St Jeor × Aktivität − Ziel oder fest),
+  Makro-Ampel, Mahlzeiten je Fenster ein-/ausplanen, „gegessen" markieren.
+- **Bessere Wahl** — heuristische Alternativ-Vorschläge je Kategorie/Nutri-Score.
+- **Profil** — Ziel, Aktivität, Gewicht, manuelles/automatisches Budget,
+  JSON-Export/-Import (Backup & Gerätewechsel).
+
+Doku: `DATENMODELL.md` (Entitäten/Felder), `mockup.html` (ursprünglicher
+Klick-Dummy, Look-Referenz).
+
+## Entwicklung
+
+```bash
+npm install
+npm run dev      # Dev-Server (Vite)
+npm run build    # Produktionsbuild nach dist/
+npm run preview  # Build lokal ansehen
+```
+
+Local-first: alle Daten liegen in IndexedDB im Browser. Zum Zurücksetzen die
+Site-Daten löschen — oder über Profil → Import ein Backup einspielen.
+
+### Struktur
+
+```
+src/
+  db/kvStore.js        IndexedDB-Wrapper + Export/Import
+  store/               App-State (Context) + abgeleitete Werte
+  utils/               energy.js (Budget), nutrition.js (Nährwerte), format.js
+  data/                Kategorien, Slots, Seed-Daten
+  components/          TabBar, NutriGrade, Stepper, Sheet
+  screens/             Pantry, ProductForm, MealList, MealEditor, Today, Better, Profile
+  styles/              theme.css (Tokens), app.css
+```
 
 ## Nächste Schritte (Vorschlag)
 
-1. Vite-/React-Gerüst analog `../new` aufsetzen (Theme-Tokens wiederverwenden).
-2. `kvStore` + Stores anlegen, Produkt-CRUD.
-3. Open-Food-Facts-Barcode-Import.
-4. Mahlzeiten-Builder mit Live-Nährwerten (`utils/nutrition.js`).
+1. **Open-Food-Facts-Barcode-Import** (Kamera → EAN → Produkt vorbefüllen).
+2. **Gewichtskurve** aus den `WeightEntry`-Daten (Verlaufschart).
+3. Mengen-**Vorschlag** im Builder aktiv nutzen („so viele Scheiben passen noch").
+4. **PWA** vervollständigen (Service-Worker / Offline-Cache, Install-Prompt).
+5. Alternativen-Engine ausbauen (Akzeptanz speichern, in Vorschläge einfließen).
