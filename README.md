@@ -15,8 +15,8 @@ Lauffähiges MVP (Vite + React, IndexedDB, kein Backend). Die drei Kern-Screens
 funktionieren mit echten Daten; beim ersten Start wird ein Demo-Warenkorb
 (aus dem Mockup) angelegt.
 
-- **Vorratskammer** — Produkte per **Open-Food-Facts-Suche** übernehmen
-  (Nährwerte & Nutri-Score automatisch) oder manuell anlegen/bearbeiten,
+- **Vorratskammer** — Produkte per **Barcode-Scan** oder **Open-Food-Facts-Suche**
+  übernehmen (Nährwerte & Nutri-Score automatisch) oder manuell anlegen/bearbeiten,
   Alltagseinheiten (Scheibe/TL/Stück), kcal je Einheit.
 - **Mahlzeit bauen** — **Rezept-Vorschläge aus dem eigenen Vorrat**, fertig
   aufs Slot-Budget dosiert; antippen → im Builder feinjustieren (Mengen-Stepper,
@@ -53,23 +53,22 @@ Site-Daten löschen — oder über Profil → Import ein Backup einspielen.
 
 ```
 src/
-  api/openfoodfacts.js OFF-Suche → Produkt-Entwurf (Mapping/Kategorien)
+  api/openfoodfacts.js OFF-Suche + Barcode-Lookup → Produkt-Entwurf
   db/kvStore.js        IndexedDB-Wrapper + Export/Import
   store/               App-State (Context) + abgeleitete Werte
   utils/               energy.js (Budget), nutrition.js (Nährwerte),
                        suggest.js (Rezept-Vorschläge), format.js
   data/                Kategorien, Slots, Seed-Daten
   components/          TabBar, NutriGrade, Stepper, Sheet
-  screens/             Pantry, ProductForm, ProductSearch, MealList, MealEditor,
-                       Today, Better, Profile, Onboarding
+  screens/             Pantry, ProductForm, ProductSearch, Scanner, MealList,
+                       MealEditor, Today, Better, Profile, Onboarding
   styles/              theme.css (Tokens), app.css
 ```
 
 ## Nächste Schritte (Vorschlag)
 
-1. **Barcode-Scan** (Kamera → EAN → OFF-Produkt direkt übernehmen).
-2. **Gewichtskurve** aus den `WeightEntry`-Daten (Verlaufschart).
-3. **PWA** vervollständigen (Service-Worker / Offline-Cache, Install-Prompt).
-4. Vorschlags-Engine verfeinern (Vorlieben/Abneigungen, mehr Archetypen,
+1. **Gewichtskurve** aus den `WeightEntry`-Daten (Verlaufschart).
+2. **PWA** vervollständigen (Service-Worker / Offline-Cache, Install-Prompt).
+3. Vorschlags-Engine verfeinern (Vorlieben/Abneigungen, mehr Archetypen,
    gespeicherte Lieblingskombis bevorzugen).
-5. Alternativen-Engine ausbauen (Akzeptanz speichern, in Vorschläge einfließen).
+4. Alternativen-Engine ausbauen (Akzeptanz speichern, in Vorschläge einfließen).

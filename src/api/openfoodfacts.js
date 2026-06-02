@@ -4,6 +4,7 @@
 import { CATEGORIES, category } from '../data/categories.js'
 
 const SEARCH_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
+const PRODUCT_URL = 'https://world.openfoodfacts.org/api/v2/product/'
 const FIELDS = [
   'code', 'product_name', 'product_name_de', 'generic_name', 'brands',
   'nutriscore_grade', 'nutriments', 'serving_size', 'categories_tags', 'quantity',
@@ -18,7 +19,18 @@ export async function searchProducts(term, { signal, pageSize = 20 } = {}) {
   const res = await fetch(url, { signal })
   if (!res.ok) throw new Error(`Open Food Facts: HTTP ${res.status}`)
   const data = await res.json()
-  return (data.products || []).map(toDraft).filter(Boolean)
+  return (data.products || []).map(buildDraft).filter((d) => d.name && d.nutriments.kcal > 0)
+}
+
+// Produktsuche per Barcode (EAN). Liefert null, wenn unbekannt.
+export async function getProductByBarcode(code, { signal } = {}) {
+  const ean = String(code).trim()
+  if (!ean) return null
+  const res = await fetch(`${PRODUCT_URL}${encodeURIComponent(ean)}.json?fields=${FIELDS}`, { signal })
+  if (!res.ok) throw new Error(`Open Food Facts: HTTP ${res.status}`)
+  const data = await res.json()
+  if (data.status !== 1 || !data.product) return null
+  return buildDraft({ ...data.product, code: ean })
 }
 
 const numberFrom = (v) => {
@@ -61,10 +73,11 @@ function guessCategory(tags = []) {
   return 'other'
 }
 
-function toDraft(off) {
+// OFF-Produkt → Entwurf fürs Produktformular. Liefert immer ein Objekt
+// (auch lückenhaft); Aufrufer filtern bei Bedarf (Suche) oder ergänzen (Scan).
+function buildDraft(off) {
   const name = (off.product_name_de || off.product_name || off.generic_name || '').trim()
   const kcal = kcalFrom(off.nutriments)
-  if (!name || kcal <= 0) return null // ohne Name/Energie unbrauchbar
 
   const catKey = guessCategory(off.categories_tags)
   const cat = category(catKey)
