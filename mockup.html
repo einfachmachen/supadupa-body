@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SupaDupa Body — Mockup v0.1</title>
+<style>
+  :root{
+    --bg:#0E0F12; --surf:#16181D; --surf2:#1E2127; --surf3:#262A32;
+    --txt:#F2F3F5; --txt2:#9AA0A8; --lbl:#6B7079;
+    --bd:#262A32; --bds:#343943;
+    --lime:#AACC00; --neg:#EA4025; --gold:#F5A623; --on:#0E0F12;
+    --a:#1E9E62; --b:#8FCB3A; --c:#F5C518; --d:#F08A24; --e:#EA4025;
+    --num:"Questrial","Century Gothic","Futura","Avenir Next",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%,#15171d,#0E0F12 60%);
+    color:var(--txt); min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    padding:40px 20px 80px;
+  }
+  .pagehead{text-align:center;margin-bottom:8px}
+  .pagehead h1{font-size:26px;letter-spacing:.5px;font-weight:600}
+  .pagehead h1 b{color:var(--lime)}
+  .pagehead p{color:var(--txt2);font-size:14px;margin-top:6px}
+  .tag{display:inline-block;margin-top:10px;font-size:11px;color:var(--lbl);
+    border:1px solid var(--bd);border-radius:999px;padding:4px 12px}
+
+  .board{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;
+    align-items:flex-start;margin-top:34px}
+  .col{width:340px}
+  .col > .caption{text-align:center;color:var(--txt2);font-size:12.5px;
+    margin-bottom:12px;letter-spacing:.3px}
+  .col > .caption b{color:var(--txt)}
+
+  /* phone frame */
+  .phone{width:340px;height:710px;background:var(--bg);border:1px solid var(--bds);
+    border-radius:38px;padding:14px 12px;position:relative;overflow:hidden;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7),inset 0 0 0 6px #000}
+  .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:120px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:5}
+  .screen{height:100%;overflow:hidden;display:flex;flex-direction:column;
+    border-radius:26px}
+
+  .sbar{display:flex;justify-content:space-between;font-size:12px;color:var(--txt2);
+    padding:6px 14px 2px}
+  .head{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 10px}
+  .head h2{font-size:19px;font-weight:600}
+  .head .sub{color:var(--txt2);font-size:12.5px;margin-top:2px}
+  .iconbtn{width:34px;height:34px;border-radius:12px;background:var(--surf2);
+    display:flex;align-items:center;justify-content:center;color:var(--txt);
+    border:1px solid var(--bd);font-size:18px}
+  .body{flex:1;overflow:hidden;padding:4px 14px 0}
+
+  .num{font-family:var(--num);font-variant-numeric:tabular-nums}
+
+  /* ---- nutri grade pill ---- */
+  .grade{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;
+    justify-content:center;font-weight:700;color:#06210f;font-size:13px;flex:none}
+  .gA{background:var(--a);color:#eafff2} .gB{background:var(--b)}
+  .gC{background:var(--c)} .gD{background:var(--d);color:#fff} .gE{background:var(--e);color:#fff}
+
+  /* search */
+  .search{display:flex;align-items:center;gap:8px;background:var(--surf2);
+    border:1px solid var(--bd);border-radius:14px;padding:10px 12px;margin:2px 0 12px;
+    color:var(--lbl);font-size:14px}
+
+  /* product row */
+  .prow{display:flex;align-items:center;gap:11px;padding:11px 8px;
+    border-bottom:1px solid var(--bd)}
+  .prow .pname{flex:1;min-width:0}
+  .prow .pname .t{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prow .pname .m{font-size:11.5px;color:var(--txt2);margin-top:2px}
+  .prow .kcal{font-size:14px;color:var(--txt)}
+  .prow .kcal small{color:var(--lbl);font-size:10.5px;display:block;text-align:right}
+  .chip{font-size:10px;color:var(--txt2);border:1px solid var(--bd);border-radius:6px;
+    padding:1px 6px;margin-right:5px}
+
+  /* fab */
+  .fab{position:absolute;right:22px;bottom:84px;width:54px;height:54px;border-radius:18px;
+    background:var(--lime);color:var(--on);display:flex;align-items:center;justify-content:center;
+    font-size:28px;box-shadow:0 12px 24px -6px rgba(170,204,0,.5);z-index:6}
+
+  /* tabbar */
+  .tabs{display:flex;justify-content:space-around;align-items:center;
+    padding:12px 8px 16px;border-top:1px solid var(--bd);background:var(--bg)}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--lbl);font-size:10px}
+  .tab.on{color:var(--lime)}
+  .tab .ic{font-size:19px}
+
+  /* ---- ring (day budget) ---- */
+  .ringwrap{display:flex;flex-direction:column;align-items:center;padding:10px 0 4px}
+  .ring{width:182px;height:182px;border-radius:50%;
+    background:conic-gradient(var(--lime) 0 62%, var(--surf3) 62% 100%);
+    display:flex;align-items:center;justify-content:center;position:relative}
+  .ring::after{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--bg)}
+  .ring .inner{position:relative;z-index:2;text-align:center}
+  .ring .big{font-size:38px;line-height:1}
+  .ring .big small{font-size:14px;color:var(--txt2)}
+  .ring .lab{color:var(--txt2);font-size:12px;margin-top:6px}
+  .ring .lab b{color:var(--lime)}
+
+  .macros{display:flex;gap:8px;margin:16px 0 6px}
+  .macro{flex:1;background:var(--surf);border:1px solid var(--bd);border-radius:14px;
+    padding:10px 8px;text-align:center}
+  .macro .v{font-size:16px} .macro .v small{font-size:10px;color:var(--lbl)}
+  .macro .k{font-size:10.5px;color:var(--txt2);margin-top:3px;letter-spacing:.4px}
+  .macro .bar{height:4px;border-radius:3px;background:var(--surf3);margin-top:7px;overflow:hidden}
+  .macro .bar i{display:block;height:100%}
+
+  .slot{margin-top:14px}
+  .slot .sh{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:12px;color:var(--txt2);margin-bottom:7px;letter-spacing:.3px}
+  .slot .sh b{color:var(--txt);font-size:13px}
+  .mealcard{display:flex;align-items:center;gap:10px;background:var(--surf);
+    border:1px solid var(--bd);border-radius:14px;padding:11px 12px;margin-bottom:8px}
+  .mealcard .em{font-size:20px}
+  .mealcard .mc{flex:1}
+  .mealcard .mc .t{font-size:14px}
+  .mealcard .mc .d{font-size:11.5px;color:var(--txt2);margin-top:2px}
+  .mealcard .kc{font-size:14px}
+  .addmeal{border:1px dashed var(--bds);border-radius:14px;padding:11px;text-align:center;
+    color:var(--lbl);font-size:13px}
+
+  /* ---- meal builder ---- */
+  .livebar{background:var(--surf);border:1px solid var(--bd);border-radius:16px;
+    padding:13px 14px;margin:2px 0 14px}
+  .livebar .top{display:flex;justify-content:space-between;align-items:baseline}
+  .livebar .top .kc{font-size:28px} .livebar .top .kc small{font-size:13px;color:var(--txt2)}
+  .livebar .top .rem{font-size:12px;color:var(--lime);text-align:right}
+  .livebar .top .rem small{color:var(--txt2);display:block;font-size:10.5px}
+  .track{height:8px;border-radius:5px;background:var(--surf3);margin:12px 0 4px;overflow:hidden;display:flex}
+  .track i{height:100%}
+  .legend{display:flex;gap:14px;font-size:10.5px;color:var(--txt2);margin-top:8px}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .dot{width:8px;height:8px;border-radius:3px}
+
+  .ing{display:flex;align-items:center;gap:11px;padding:12px 4px;border-bottom:1px solid var(--bd)}
+  .ing .n{flex:1}
+  .ing .n .t{font-size:14px}
+  .ing .n .d{font-size:11.5px;color:var(--txt2);margin-top:2px}
+  .stepper{display:flex;align-items:center;gap:0;border:1px solid var(--bd);border-radius:11px;overflow:hidden}
+  .stepper button{width:30px;height:30px;background:var(--surf2);color:var(--txt);border:none;font-size:18px}
+  .stepper .q{min-width:54px;text-align:center;font-size:13px;padding:0 4px}
+  .stepper .q b{font-size:15px;display:block}
+  .stepper .q small{font-size:9.5px;color:var(--lbl)}
+  .cta{position:absolute;left:14px;right:14px;bottom:18px;background:var(--lime);color:var(--on);
+    text-align:center;padding:15px;border-radius:16px;font-size:15px;font-weight:600;z-index:6}
+
+  /* ---- alternatives ---- */
+  .altcard{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:14px}
+  .altcard .why{font-size:12px;color:var(--gold);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+  .swap{display:flex;align-items:center;gap:10px}
+  .swap .p{flex:1}
+  .swap .p .t{font-size:13.5px}
+  .swap .p .m{font-size:11px;color:var(--txt2);margin-top:2px}
+  .swap .arrow{color:var(--lime);font-size:20px}
+  .swap .old .t{color:var(--txt2);text-decoration:line-through}
+  .delta{margin-top:12px;display:flex;gap:8px}
+  .delta .d{flex:1;background:var(--surf2);border-radius:10px;padding:8px;text-align:center}
+  .delta .d .v{font-size:14px;color:var(--lime)} .delta .d .v.up{color:var(--lime)}
+  .delta .d .k{font-size:10px;color:var(--txt2);margin-top:2px}
+  .altbtns{display:flex;gap:8px;margin-top:12px}
+  .altbtns .gh{flex:1;text-align:center;padding:11px;border-radius:12px;font-size:13px}
+  .altbtns .ok{background:var(--lime);color:var(--on)}
+  .altbtns .no{border:1px solid var(--bd);color:var(--txt2)}
+
+  @media(max-width:760px){
+    body{padding:24px 6px 60px}
+    .col{width:100%;max-width:360px}
+    .phone{width:100%;max-width:360px}
+  }
+</style>
+</head>
+<body>
+
+  <div class="pagehead">
+    <h1>SupaDupa <b>Body</b></h1>
+    <p>Erst den Warenkorb erfassen — dann kalorienbewusst kombinieren statt mühsam protokollieren.</p>
+    <span class="tag">Mockup v0.1 · statischer Entwurf · Look angelehnt an SupaDupa Money</span>
+  </div>
+
+  <div class="board">
+
+    <!-- ============ 1. VORRATSKAMMER ============ -->
+    <div class="col">
+      <div class="caption"><b>1 · Vorratskammer</b> — deine Stammprodukte (einmalig erfasst)</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:41</span><span>100%</span></div>
+          <div class="head">
+            <div><h2>Vorratskammer</h2><div class="sub">42 Produkte · 3 Märkte</div></div>
+            <div class="iconbtn">⌕</div>
+          </div>
+          <div class="body">
+            <div class="search">▢&nbsp; Scannen oder suchen…</div>
+
+            <div class="prow">
+              <span class="grade gB">B</span>
+              <div class="pname"><div class="t">Vollkorntoast</div>
+                <div class="m"><span class="chip">Aldi</span>Goldähren · Scheibe ≈ 45 g</div></div>
+              <div class="kcal num">102<small>/ Scheibe</small></div>
+            </div>
+            <div class="prow">
+              <span class="grade gD">D</span>
+              <div class="pname"><div class="t">Frischkäse Doppelrahm</div>
+                <div class="m"><span class="chip">Lidl</span>TL ≈ 15 g · 31 % Fett</div></div>
+              <div class="kcal num">52<small>/ TL</small></div>
+            </div>
+            <div class="prow">
+              <span class="grade gA">A</span>
+              <div class="pname"><div class="t">Magerquark</div>
+                <div class="m"><span class="chip">Aldi</span>Portion ≈ 125 g</div></div>
+              <div class="kcal num">82<small>/ Portion</small></div>
+            </div>
+            <div class="prow">
+              <span class="grade gC">C</span>
+              <div class="pname"><div class="t">Gouda jung 48 %</div>
+                <div class="m"><span class="chip">Edeka</span>Scheibe ≈ 30 g</div></div>
+              <div class="kcal num">109<small>/ Scheibe</small></div>
+            </div>
+            <div class="prow">
+              <span class="grade gA">A</span>
+              <div class="pname"><div class="t">Gurke</div>
+                <div class="m"><span class="chip">Aldi</span>Stück ≈ 400 g</div></div>
+              <div class="kcal num">48<small>/ Stück</small></div>
+            </div>
+            <div class="prow">
+              <span class="grade gE">E</span>
+              <div class="pname"><div class="t">Salami-Sticks</div>
+                <div class="m"><span class="chip">Lidl</span>Stück ≈ 25 g</div></div>
+              <div class="kcal num">126<small>/ Stück</small></div>
+            </div>
+          </div>
+          <div class="fab">+</div>
+          <div class="tabs">
+            <div class="tab on"><span class="ic">▦</span>Vorrat</div>
+            <div class="tab"><span class="ic">🍽</span>Bauen</div>
+            <div class="tab"><span class="ic">◍</span>Heute</div>
+            <div class="tab"><span class="ic">↻</span>Bessere</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 2. MAHLZEIT BAUEN ============ -->
+    <div class="col">
+      <div class="caption"><b>2 · Mahlzeit bauen</b> — Mengen live gegen das Restbudget</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:41</span><span>100%</span></div>
+          <div class="head">
+            <div class="iconbtn">‹</div>
+            <div style="text-align:center"><h2 style="font-size:17px">Frühstücksbrot</h2>
+              <div class="sub">Frühstück</div></div>
+            <div class="iconbtn">✕</div>
+          </div>
+          <div class="body">
+            <div class="livebar">
+              <div class="top">
+                <div class="kc num">368 <small>kcal</small></div>
+                <div class="rem"><small>Rest heute</small><span class="num">1 312 kcal</span></div>
+              </div>
+              <div class="track">
+                <i style="width:42%;background:var(--lime)"></i>
+                <i style="width:18%;background:var(--c)"></i>
+                <i style="width:22%;background:var(--d)"></i>
+              </div>
+              <div class="legend">
+                <span><i class="dot" style="background:var(--lime)"></i>Eiweiß 24 g</span>
+                <span><i class="dot" style="background:var(--c)"></i>KH 31 g</span>
+                <span><i class="dot" style="background:var(--d)"></i>Fett 17 g</span>
+              </div>
+            </div>
+
+            <div class="ing">
+              <span class="grade gB">B</span>
+              <div class="n"><div class="t">Vollkorntoast</div><div class="d num">2 × 102 = 204 kcal</div></div>
+              <div class="stepper"><button>−</button><div class="q"><b class="num">2</b><small>Scheiben</small></div><button>+</button></div>
+            </div>
+            <div class="ing">
+              <span class="grade gD">D</span>
+              <div class="n"><div class="t">Frischkäse</div><div class="d num">2 × 52 = 104 kcal</div></div>
+              <div class="stepper"><button>−</button><div class="q"><b class="num">2</b><small>TL</small></div><button>+</button></div>
+            </div>
+            <div class="ing">
+              <span class="grade gA">A</span>
+              <div class="n"><div class="t">Gurke</div><div class="d num">¼ × 48 = 12 kcal</div></div>
+              <div class="stepper"><button>−</button><div class="q"><b class="num">¼</b><small>Stück</small></div><button>+</button></div>
+            </div>
+            <div class="ing">
+              <span class="grade gA">A</span>
+              <div class="n"><div class="t">Magerquark</div><div class="d num">0,6 × 82 = 48 kcal</div></div>
+              <div class="stepper"><button>−</button><div class="q"><b class="num">½</b><small>Portion</small></div><button>+</button></div>
+            </div>
+
+            <div style="margin-top:14px;text-align:center;color:var(--lime);font-size:13px">＋ Zutat aus dem Vorrat</div>
+          </div>
+          <div class="cta">Mahlzeit speichern</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 3. HEUTE ============ -->
+    <div class="col">
+      <div class="caption"><b>3 · Heute</b> — Tagesbudget &amp; geplante Mahlzeiten</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:41</span><span>100%</span></div>
+          <div class="head">
+            <div><h2>Heute</h2><div class="sub">Di · 2. Juni · Ziel: abnehmen</div></div>
+            <div class="iconbtn">☰</div>
+          </div>
+          <div class="body">
+            <div class="ringwrap">
+              <div class="ring">
+                <div class="inner">
+                  <div class="big num">1 312<small> kcal</small></div>
+                  <div class="lab">übrig von <b class="num">2 100</b></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="macros">
+              <div class="macro"><div class="v num">48<small>/120 g</small></div><div class="k">EIWEISS</div>
+                <div class="bar"><i style="width:40%;background:var(--lime)"></i></div></div>
+              <div class="macro"><div class="v num">94<small>/210 g</small></div><div class="k">KOHLENHYDR.</div>
+                <div class="bar"><i style="width:45%;background:var(--c)"></i></div></div>
+              <div class="macro"><div class="v num">31<small>/65 g</small></div><div class="k">FETT</div>
+                <div class="bar"><i style="width:48%;background:var(--d)"></i></div></div>
+            </div>
+
+            <div class="slot">
+              <div class="sh"><b>Frühstück</b><span class="num">368 kcal</span></div>
+              <div class="mealcard"><div class="em">🥪</div>
+                <div class="mc"><div class="t">Frühstücksbrot</div><div class="d">Toast · Frischkäse · Gurke</div></div>
+                <div class="kc num">368</div></div>
+            </div>
+            <div class="slot">
+              <div class="sh"><b>Mittag</b><span class="num">420 kcal</span></div>
+              <div class="mealcard"><div class="em">🥗</div>
+                <div class="mc"><div class="t">Quark-Bowl</div><div class="d">Magerquark · Gurke · Beeren</div></div>
+                <div class="kc num">420</div></div>
+            </div>
+            <div class="slot">
+              <div class="sh"><b>Abend</b><span style="color:var(--lbl)">offen</span></div>
+              <div class="addmeal">＋ Mahlzeit planen — ca. 1 312 kcal frei</div>
+            </div>
+          </div>
+          <div class="tabs">
+            <div class="tab"><span class="ic">▦</span>Vorrat</div>
+            <div class="tab"><span class="ic">🍽</span>Bauen</div>
+            <div class="tab on"><span class="ic">◍</span>Heute</div>
+            <div class="tab"><span class="ic">↻</span>Bessere</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 4. BESSERE ALTERNATIVEN ============ -->
+    <div class="col">
+      <div class="caption"><b>4 · Bessere Wahl</b> — Gewohntes Schritt für Schritt ersetzen</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="sbar"><span>9:41</span><span>100%</span></div>
+          <div class="head">
+            <div><h2>Bessere Wahl</h2><div class="sub">3 Vorschläge für deinen Einkauf</div></div>
+            <div class="iconbtn">⌕</div>
+          </div>
+          <div class="body">
+
+            <div class="altcard">
+              <div class="why">▼ weniger Fett &amp; besserer Nutri-Score</div>
+              <div class="swap">
+                <div class="p old"><div class="t">Frischkäse Doppelrahm</div>
+                  <div class="m"><span class="grade gD" style="width:20px;height:20px;font-size:11px;display:inline-flex;vertical-align:middle"></span> 31 % Fett · Lidl</div></div>
+                <div class="arrow">→</div>
+                <div class="p"><div class="t">Frischkäse leicht</div>
+                  <div class="m">12 % Fett · gleiche Marke</div></div>
+              </div>
+              <div class="delta">
+                <div class="d"><div class="v num">−19 g</div><div class="k">Fett /100 g</div></div>
+                <div class="d"><div class="v num">−120</div><div class="k">kcal /100 g</div></div>
+                <div class="d"><div class="v num">D → B</div><div class="k">Nutri-Score</div></div>
+              </div>
+              <div class="altbtns"><div class="gh ok">Ersetzen</div><div class="gh no">Behalten</div></div>
+            </div>
+
+            <div class="altcard">
+              <div class="why">▼ deutlich weniger Zucker</div>
+              <div class="swap">
+                <div class="p old"><div class="t">Frucht-Joghurt Erdbeer</div>
+                  <div class="m">13 g Zucker /100 g · Aldi</div></div>
+                <div class="arrow">→</div>
+                <div class="p"><div class="t">Naturjogh. + frische Beeren</div>
+                  <div class="m">5 g Zucker /100 g</div></div>
+              </div>
+              <div class="delta">
+                <div class="d"><div class="v num">−8 g</div><div class="k">Zucker /100 g</div></div>
+                <div class="d"><div class="v num">+4 g</div><div class="k">Eiweiß /100 g</div></div>
+                <div class="d"><div class="v num">C → A</div><div class="k">Nutri-Score</div></div>
+              </div>
+              <div class="altbtns"><div class="gh ok">Ersetzen</div><div class="gh no">Behalten</div></div>
+            </div>
+
+          </div>
+          <div class="tabs">
+            <div class="tab"><span class="ic">▦</span>Vorrat</div>
+            <div class="tab"><span class="ic">🍽</span>Bauen</div>
+            <div class="tab"><span class="ic">◍</span>Heute</div>
+            <div class="tab on"><span class="ic">↻</span>Bessere</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
