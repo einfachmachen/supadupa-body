@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { useApp } from './store/AppContext.jsx'
 import { todayISO } from './utils/id.js'
 import TabBar from './components/TabBar.jsx'
@@ -11,6 +11,9 @@ import Today from './screens/Today.jsx'
 import Better from './screens/Better.jsx'
 import Profile from './screens/Profile.jsx'
 import Onboarding from './screens/Onboarding.jsx'
+
+// ZXing nur bei Bedarf nachladen.
+const Scanner = lazy(() => import('./screens/Scanner.jsx'))
 
 export default function App() {
   const { ready, profile } = useApp()
@@ -40,9 +43,19 @@ export default function App() {
         {editor.kind === 'addProduct' && (
           <ProductSearch
             onClose={close}
+            onScan={() => setEditor({ kind: 'scan' })}
             onManual={() => setEditor({ kind: 'product' })}
             onPick={(draft) => setEditor({ kind: 'product', draft })}
           />
+        )}
+        {editor.kind === 'scan' && (
+          <Suspense fallback={<div className="empty" style={{ margin: 'auto' }}><div className="ic">📷</div><div className="t">Kamera startet…</div></div>}>
+            <Scanner
+              onClose={close}
+              onManual={() => setEditor({ kind: 'product' })}
+              onPick={(draft) => setEditor({ kind: 'product', draft })}
+            />
+          </Suspense>
         )}
         {editor.kind === 'product' && <ProductForm productId={editor.id} draft={editor.draft} onClose={close} />}
         {editor.kind === 'meal' && (

@@ -267,6 +267,22 @@ input, select { font-family: inherit; }
 
 .linkbtn { background: none; border: none; color: var(--lime); font-size: 12px; padding: 2px 4px; }
 
+/* ---------- Barcode-Scanner ---------- */
+.scanwrap {
+  position: relative; width: 100%; aspect-ratio: 3 / 4; max-height: 60vh;
+  border-radius: 18px; overflow: hidden; background: #000; border: 1px solid var(--bd);
+}
+.scanvideo { width: 100%; height: 100%; object-fit: cover; }
+.scanframe {
+  position: absolute; left: 12%; right: 12%; top: 50%; height: 26%; transform: translateY(-50%);
+  border: 2px solid var(--lime); border-radius: 14px;
+  box-shadow: 0 0 0 100vmax rgba(0,0,0,.45);
+}
+.scanhint {
+  position: absolute; left: 0; right: 0; bottom: 14px; text-align: center;
+  color: #fff; font-size: 13px; text-shadow: 0 1px 4px rgba(0,0,0,.8);
+}
+
 /* ---------- Onboarding ---------- */
 .dots { display: flex; gap: 7px; align-items: center; }
 .dot-step { width: 7px; height: 7px; border-radius: 50%; background: var(--surf3); transition: all .2s; }

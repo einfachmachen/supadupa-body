@@ -5,7 +5,7 @@ import NutriGrade from '../components/NutriGrade.jsx'
 import { int } from '../utils/format.js'
 
 // Produkt per Open-Food-Facts-Suche finden und in den Vorrat übernehmen.
-export default function ProductSearch({ onPick, onManual, onClose }) {
+export default function ProductSearch({ onPick, onManual, onScan, onClose }) {
   const [term, setTerm] = useState('')
   const [results, setResults] = useState([])
   const [status, setStatus] = useState('idle') // idle | loading | done | error
@@ -39,6 +39,12 @@ export default function ProductSearch({ onPick, onManual, onClose }) {
       </div>
 
       <div className="body">
+        {onScan && (
+          <button className="cta" style={{ marginTop: 4, marginBottom: 12 }} onClick={onScan}>
+            📷 Barcode scannen
+          </button>
+        )}
+
         <div className="search">
           <span>⌕</span>
           <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="z. B. Vollkorntoast, Magerquark…" autoFocus />
