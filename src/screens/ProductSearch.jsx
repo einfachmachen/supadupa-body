@@ -5,8 +5,8 @@ import NutriGrade from '../components/NutriGrade.jsx'
 import { int } from '../utils/format.js'
 
 // Produkt per Open-Food-Facts-Suche finden und in den Vorrat übernehmen.
-export default function ProductSearch({ onPick, onManual, onScan, onClose }) {
-  const [term, setTerm] = useState('')
+export default function ProductSearch({ onPick, onManual, onScan, onClose, initialTerm = '' }) {
+  const [term, setTerm] = useState(initialTerm)
   const [results, setResults] = useState([])
   const [status, setStatus] = useState('idle') // idle | loading | done | error
   const abortRef = useRef(null)

@@ -23,7 +23,9 @@ funktionieren mit echten Daten; beim ersten Start wird ein Demo-Warenkorb
   Live-Nährwerte) und als Vorlage speichern oder einplanen.
 - **Heute** — Tagesbudget-Ring (Mifflin-St Jeor × Aktivität − Defizit),
   Makro-Ampel, Mahlzeiten je Fenster ein-/ausplanen, „gegessen" markieren.
-- **Bessere Wahl** — heuristische Alternativ-Vorschläge je Kategorie/Nutri-Score.
+- **Bessere Wahl** — **Einkaufstipps** für mehr Vielfalt (erkennt fehlende
+  Lebensmittelgruppen → konkrete Kaufempfehlungen mit Direkt-Suche) plus
+  Alternativ-Vorschläge je Kategorie/Nutri-Score.
 - **Onboarding** — kurze Erst-Abfrage für den Grundumsatz und das **Ziel
   (Gewicht bis wann)**.
 - **Profil** — Grundumsatz-Daten, Zielgewicht & -datum, Gewicht,

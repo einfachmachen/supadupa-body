@@ -59,12 +59,14 @@ function guessCategory(tags = []) {
   const hay = tags.join(' ')
   const rules = [
     ['drink', /beverage|drink|getr|juice|soda|water|wasser|saft/],
-    ['dairy', /dairy|milk|milch|cheese|käse|kase|yogurt|joghurt|quark|cream|sahne|butter-milk/],
-    ['spread', /spread|aufstrich|butter|margarine|jam|konfit|honey|honig|nut-butter/],
+    ['egg', /\beggs?\b|\beier\b|hühnerei|huhnerei|omelet/],
+    ['fish', /fish|fisch|seafood|salmon|lachs|tuna|thunfisch/],
+    ['dairy', /dairy|milk|milch|cheese|käse|kase|yogurt|joghurt|quark|skyr|cream|sahne|butter-milk/],
+    ['spread', /spread|aufstrich|jam|konfit|honey|honig|nut-butter|nutella/],
     ['bread', /bread|brot|toast|bakery|backwaren|roll|brötchen|brotchen/],
     ['grain', /pasta|nudel|rice|reis|cereal|getreide|flake|müsli|muesli|oat|hafer|couscous|quinoa/],
-    ['meat', /meat|fleisch|sausage|wurst|salami|ham|schinken|poultry|chicken|hähnchen|hahnchen|beef|pork/],
-    ['fish', /fish|fisch|seafood|salmon|lachs|tuna|thunfisch/],
+    ['meat', /meat|fleisch|sausage|wurst|salami|ham|schinken|poultry|chicken|hähnchen|hahnchen|beef|pork|pute|turkey/],
+    ['fat', /\boil\b|öl|olive|\bnut|nuss|mandel|almond|walnut|avocado|seeds|samen/],
     ['fruit', /fruit|obst|berry|beere|apple|apfel|banana|banane/],
     ['veg', /vegetable|gemüse|gemuse|salad|salat|legume|tomato|tomate|cucumber|gurke/],
     ['snack', /snack|chocolate|schokolade|sweet|süß|sus|candy|chips|cookie|keks|cake|kuchen/],
