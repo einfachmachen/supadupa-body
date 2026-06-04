@@ -42,6 +42,7 @@ export default function App() {
       <div className="app">
         {editor.kind === 'addProduct' && (
           <ProductSearch
+            initialTerm={editor.term || ''}
             onClose={close}
             onScan={() => setEditor({ kind: 'scan' })}
             onManual={() => setEditor({ kind: 'product' })}
@@ -94,7 +95,9 @@ export default function App() {
           onPlanDraft={(draft) => setEditor({ kind: 'meal', draftMeal: draft, addToDate: todayISO() })}
         />
       )}
-      {tab === 'better' && <Better />}
+      {tab === 'better' && (
+        <Better onShop={(term) => setEditor({ kind: 'addProduct', term })} />
+      )}
 
       <TabBar active={tab} onChange={setTab} />
     </div>
